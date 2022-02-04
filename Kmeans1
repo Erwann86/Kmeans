@@ -1,8 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan  2 13:44:52 2022
+
+@author: damii
+"""
+
 import numpy as np
 from scipy.spatial.distance import cdist 
 from sklearn.datasets import load_digits
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
+#from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
 import time
@@ -46,9 +53,12 @@ def kmeans(x,k, no_of_iterations):
          
         distances = cdist(x, centroids ,'euclidean')
         points = np.array([np.argmin(i) for i in distances])
+        
+        distances_intercluster = cdist(centroids, centroids, 'euclidean')
+        
         end = time.time()
          
-    return {'labels':points,'class':k,'temp': end - start}
+    return {'label':points,'class':k,'temp': end - start, 'intercluster': distances_intercluster}
 
 
 data = load_digits().data
@@ -57,10 +67,13 @@ pca = PCA(2)
 df = pca.fit_transform(Matrice)
 
 
-
-results = kmeans(df,10,1000)
+results = kmeans(df,5,1000)
 
 label = results['label']
+print(results['intercluster'],results['temp'])
+print(results['label'])
+print(results['class'])
+
 
 u_labels = np.unique(label)
 for i in u_labels:
